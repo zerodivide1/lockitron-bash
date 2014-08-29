@@ -33,4 +33,15 @@ lock|unlock)
     curl -X PUT -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN&state=$1"
   fi
   ;;
+firmware)
+  if [[ -z "$2" ]]
+  then
+    echo "Specify a unit to update firmware on"
+    exit -1
+  else
+    lock_id=$(getlockid "$2")
+
+    curl -X PUT -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN&update_avr_firmware=true&update_ble_firmware=true"
+  fi
+  ;;
 esac

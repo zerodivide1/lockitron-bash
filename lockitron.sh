@@ -17,4 +17,16 @@ case $1 in
 list)
   all_devices=$(getdevices)
   echo $all_devices | jq -r ".[].name"
+  ;;
+unlock)
+  if [[ -z "$2" ]]
+  then
+    echo "Specify a unit to unlock"
+    exit -1
+  else
+    lock_id=$(getdevices | jq ".[] | select(.name==\"$2\")" | jq -r ".id")
+
+    curl -X PUT -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN&state=unlock"
+  fi
+  ;;
 esac

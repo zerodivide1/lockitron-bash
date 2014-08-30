@@ -30,17 +30,28 @@ status)
   else
     lock_id=$(getlockid "$2")
 
-    status=$(curl -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN" | jq '{state,avr_update_progress,ble_update_progress,pending_activity,updated_at,next_wake}')
+    status=$(curl -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN" | jq '{state,avr_update_progress,ble_update_progress,updated_at,next_wake,pending_activity}')
     lock_state=$(echo $status | jq -r '.state')
     next_wake_utc=$(echo $status | jq -r '.next_wake')
     next_wake=$(date -d "$next_wake_utc")
     last_update_utc=$(echo $status | jq -r '.updated_at')
     last_update=$(date -d "$last_update_utc")
+    avr_progress=$(echo $status | jq -r '.avr_update_progress')
+    ble_progress=$(echo $status | jq -r '.ble_update_progress')
+    pending_id=$(echo $status | jq -r '.pending_activity.id')
     echo "State of lock \"$2\"
 State:		$lock_state
 Last Updated:	$last_update
-Next Update:	$next_wake
-"
+Next Update:	$next_wake"
+    if [[ "$avr_progress" -ne "100" ]]
+    then
+      echo "AVR Progress:	$avr_progress%"
+    fi
+    if [[ "$ble_progress" -ne "100" ]]
+    then
+      echo "BLE Progress:	$ble_progress%"
+    fi
+    echo "Pending:	$pending_id"
   fi
   ;;
 lock|unlock)

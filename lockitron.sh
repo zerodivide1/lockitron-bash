@@ -22,6 +22,27 @@ list)
   all_devices=$(getdevices)
   echo $all_devices | jq -r ".[].name"
   ;;
+status)
+  if [[ -z "$2" ]]
+  then
+    echo "Specify a unit to retrieve the status"
+    exit -1
+  else
+    lock_id=$(getlockid "$2")
+
+    status=$(curl -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN" | jq '{state,avr_update_progress,ble_update_progress,pending_activity,updated_at,next_wake}')
+    lock_state=$(echo $status | jq -r '.state')
+    next_wake_utc=$(echo $status | jq -r '.next_wake')
+    next_wake=$(date -d "$next_wake_utc")
+    last_update_utc=$(echo $status | jq -r '.updated_at')
+    last_update=$(date -d "$last_update_utc")
+    echo "State of lock \"$2\"
+State:		$lock_state
+Last Updated:	$last_update
+Next Update:	$next_wake
+"
+  fi
+  ;;
 lock|unlock)
   if [[ -z "$2" ]]
   then

@@ -3,6 +3,11 @@ lockitron-bash
 
 Control a Lockitron unit from a Bash command line.
 
+## Dependencies
+
+* curl
+* [jq](http://stedolan.github.io/jq/)
+
 ## Installation
 
 1. `git clone https://github.com/zerodivide1/lockitron-bash.git`

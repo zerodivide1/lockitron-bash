@@ -7,6 +7,7 @@ Control a Lockitron unit from a Bash command line.
 
 * curl
 * [jq](http://stedolan.github.io/jq/)
+* hcitool (Optional)
 
 ## Installation
 
@@ -25,7 +26,9 @@ The following commands can be used:
 * `list` - Retrieves the names of current Lockitron units associated with your account
 * `status <unit name>` - Retrieves the current status of the given Lockitron unit
 * `lock <unit name>` - Issues a lock command to the given Lockitron (will return when the operation has completed)
+* `lock <unit name> immed` - Issues a lock command to the given Lockitron immediately (requires the command to be run as root and requires the Lockitron to be within range of a connected Bluetooth 4.0 w/BLE device)
 * `unlock <unit name>` - Issues an unlock command to the given Lockitron (will return when the operation has completed)
+* `unlock <unit name> immed` - Issues a unlock command to the given Lockitron immediately (requires the command to be run as root and requires the Lockitron to be within range of a connected Bluetooth 4.0 w/BLE device)
 * `firmware <unit name>` - Issues a command to update the AVR and BLE firmware of the given Lockitron unit
 
 ## Contributors

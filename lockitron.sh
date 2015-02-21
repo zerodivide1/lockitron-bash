@@ -10,11 +10,26 @@ API_URL=https://api.lockitron.com/v2
 source $CONFIG
 
 getdevices() {
-  curl -s "$API_URL/locks?access_token=$ACCESS_TOKEN" | jq "[.[] | {name,id}]"
+  curl -s "$API_URL/locks?access_token=$ACCESS_TOKEN" | jq "[.[] | {name,id,hardware_id}]"
 }
 
 getlockid() {
   getdevices | jq ".[] | select(.name==\"$1\")" | jq -r ".id"
+}
+
+getlockhwid() {
+  getdevices | jq ".[] | select(.name==\"$1\")" | jq -r ".hardware_id" | grep -o -E "[0-9a-fA-F]{8}$"
+}
+
+findlockbleaddr() {
+  DEVS=$(hcitool lescan & (sleep 2 ; pkill --signal SIGINT hcitool))
+  REGEX="([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}"
+  DEV=$(echo $DEVS | grep -o -E "$REGEX $1" | grep -o -E "$REGEX")
+  echo $DEV
+}
+
+signalble() {
+  hcitool lecc $1 > /dev/null 2>&1 &
 }
 
 case $1 in
@@ -64,7 +79,18 @@ lock|unlock)
     echo "Specify a unit to $1"
     exit -1
   else
+    if [[ "$3" == "immed" ]] ; then
+      if (( EUID != 0 )) ; then
+        echo "You must be root to $1 immediately." 1>&2
+        exit 100
+      fi
+    fi
     lock_id=$(getlockid "$2")
+    if [[ "$3" == "immed" ]] ; then
+      lock_hwid=$(getlockhwid "$2")
+      lock_bleaddr=$(findlockbleaddr $lock_hwid)
+      signalble "$lock_bleaddr"
+    fi
 
     curl -X PUT -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN&state=$1"
   fi

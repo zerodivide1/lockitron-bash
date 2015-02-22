@@ -35,6 +35,8 @@ The following commands can be used:
 
 Pull requests always welcome! You can also hit me up on Twitter [@zero_divide_1](https://twitter.com/zero_divide_1).
 
+If you would like to support the lockitron-bash project monetarily, you can send Bitcoin donations here: 1Gc3uHo3mJ7LUwJ1rZp6x3dSuRurC49mL4
+
 ## License
 
 See [LICENSE](LICENSE) for more information.

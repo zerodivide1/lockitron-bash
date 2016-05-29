@@ -84,6 +84,9 @@ Next Update:	$next_wake"
       fi
       echo "BLE Progress:	$ble_progress"
     fi
+    if [[ "$pending_id" == "null" ]] ; then
+      pending_id="NA"
+    fi
     echo "Pending:	$pending_id"
     echo "Serial#:      $serial_num"
     echo "Hardware ID:  $hardware_id"

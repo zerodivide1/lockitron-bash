@@ -60,6 +60,9 @@ status)
       avr_progress="NA"
     fi
     ble_progress=$(echo $status | jq -r '.ble_update_progress')
+    if [[ "$ble_progress" == "null" ]] ; then
+      ble_progress="NA"
+    fi
     pending_id=$(echo $status | jq -r '.pending_activity.id')
     serial_num=$(echo $status | jq -r '.serial_number')
     hardware_id=$(echo $status | jq -r '.hardware_id')
@@ -76,7 +79,10 @@ Next Update:	$next_wake"
     fi
     if [[ "$ble_progress" -ne "100" ]]
     then
-      echo "BLE Progress:	$ble_progress%"
+      if [[ "$ble_progress" != "NA" ]] ; then
+        ble_progress="$ble_progress%"
+      fi
+      echo "BLE Progress:	$ble_progress"
     fi
     echo "Pending:	$pending_id"
     echo "Serial#:      $serial_num"

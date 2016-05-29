@@ -48,11 +48,21 @@ status)
     status=$(curl -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN" | jq '{state,avr_update_progress,ble_update_progress,updated_at,next_wake,pending_activity,serial_number,hardware_id}')
     lock_state=$(echo $status | jq -r '.state')
     next_wake_utc=$(echo $status | jq -r '.next_wake')
-    next_wake=$(date -d "$next_wake_utc")
+    if [[ "$next_wake_utc" == "null" ]] ; then
+      next_wake="NA"
+    else
+      next_wake=$(date -d "$next_wake_utc")
+    fi
     last_update_utc=$(echo $status | jq -r '.updated_at')
     last_update=$(date -d "$last_update_utc")
     avr_progress=$(echo $status | jq -r '.avr_update_progress')
+    if [[ "$avr_progress" == "null" ]] ; then
+      avr_progress="NA"
+    fi
     ble_progress=$(echo $status | jq -r '.ble_update_progress')
+    if [[ "$ble_progress" == "null" ]] ; then
+      ble_progress="NA"
+    fi
     pending_id=$(echo $status | jq -r '.pending_activity.id')
     serial_num=$(echo $status | jq -r '.serial_number')
     hardware_id=$(echo $status | jq -r '.hardware_id')
@@ -62,14 +72,26 @@ Last Updated:	$last_update
 Next Update:	$next_wake"
     if [[ "$avr_progress" -ne "100" ]]
     then
-      echo "AVR Progress:	$avr_progress%"
+      if [[ "$avr_progress" != "NA" ]] ; then
+        avr_progress="$avr_progress%"
+      fi
+      echo "AVR Progress:	$avr_progress"
     fi
     if [[ "$ble_progress" -ne "100" ]]
     then
-      echo "BLE Progress:	$ble_progress%"
+      if [[ "$ble_progress" != "NA" ]] ; then
+        ble_progress="$ble_progress%"
+      fi
+      echo "BLE Progress:	$ble_progress"
+    fi
+    if [[ "$pending_id" == "null" ]] ; then
+      pending_id="NA"
     fi
     echo "Pending:	$pending_id"
     echo "Serial#:      $serial_num"
+    if [[ "$hardware_id" == "null" ]] ; then
+      hardware_id="NA"
+    fi
     echo "Hardware ID:  $hardware_id"
   fi
   ;;

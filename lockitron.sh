@@ -48,7 +48,11 @@ status)
     status=$(curl -s "$API_URL/locks/$lock_id?access_token=$ACCESS_TOKEN" | jq '{state,avr_update_progress,ble_update_progress,updated_at,next_wake,pending_activity,serial_number,hardware_id}')
     lock_state=$(echo $status | jq -r '.state')
     next_wake_utc=$(echo $status | jq -r '.next_wake')
-    next_wake=$(date -d "$next_wake_utc")
+    if [[ "$next_wake_utc" == "null" ]] ; then
+      next_wake="NA"
+    else
+      next_wake=$(date -d "$next_wake_utc")
+    fi
     last_update_utc=$(echo $status | jq -r '.updated_at')
     last_update=$(date -d "$last_update_utc")
     avr_progress=$(echo $status | jq -r '.avr_update_progress')

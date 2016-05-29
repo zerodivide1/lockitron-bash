@@ -89,6 +89,9 @@ Next Update:	$next_wake"
     fi
     echo "Pending:	$pending_id"
     echo "Serial#:      $serial_num"
+    if [[ "$hardware_id" == "null" ]] ; then
+      hardware_id="NA"
+    fi
     echo "Hardware ID:  $hardware_id"
   fi
   ;;

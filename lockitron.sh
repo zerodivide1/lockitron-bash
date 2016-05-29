@@ -56,6 +56,9 @@ status)
     last_update_utc=$(echo $status | jq -r '.updated_at')
     last_update=$(date -d "$last_update_utc")
     avr_progress=$(echo $status | jq -r '.avr_update_progress')
+    if [[ "$avr_progress" == "null" ]] ; then
+      avr_progress="NA"
+    fi
     ble_progress=$(echo $status | jq -r '.ble_update_progress')
     pending_id=$(echo $status | jq -r '.pending_activity.id')
     serial_num=$(echo $status | jq -r '.serial_number')
@@ -66,7 +69,10 @@ Last Updated:	$last_update
 Next Update:	$next_wake"
     if [[ "$avr_progress" -ne "100" ]]
     then
-      echo "AVR Progress:	$avr_progress%"
+      if [[ "$avr_progress" != "NA" ]] ; then
+        avr_progress="$avr_progress%"
+      fi
+      echo "AVR Progress:	$avr_progress"
     fi
     if [[ "$ble_progress" -ne "100" ]]
     then
